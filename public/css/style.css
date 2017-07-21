@@ -1,0 +1,38 @@
+nav,
+footer {
+  background-color: #334aa1 !important;
+}
+nav{
+  border-bottom: 2px solid orange;
+}
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+main {
+  flex: 1 0 auto;
+}
+i.icon-orange {
+  color: orange;
+  cursor: pointer;
+}
+i.icon-green{
+  color: green !important;
+  cursor: pointer;
+}
+i.icon-red{
+  color: red !important;
+  cursor: pointer;
+}
+.page-footer{
+  padding-top: 0 !important;
+  border-top: 2px solid orange;
+}
+.brand-logo{
+  margin-left: 20px;
+}
+.card{
+  padding: 12px;
+}
+

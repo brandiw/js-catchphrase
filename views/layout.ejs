@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Catchphrase Interview Practice</title>
+  <!-- JQuery (Materialize Dependency) -->
+  <script src="//code.jquery.com/jquery.js"></script>
+
+  <!-- ICONS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Dropdown Structure -->
+  <ul id="dropdown1" class="dropdown-content">
+    <li><a href="/game/phrases/add">Add a Phrase</a></li>
+    <li class="divider"></li>
+    <li><a href="https://en.wikipedia.org/wiki/Catch_Phrase_(game)">About Catchphrase</a></li>
+  </ul>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo"><i class="material-icons icon-orange">cloud</i> JS Catchphrase</a>
+      <!-- activate side-bav in mobile view -->
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/game/play">Play Now!</a></li>
+        <li><a href="/game/phrases">Full Phraselist</a></li>
+        <li><a class="waves-effect waves-light btn modal-trigger" href="#modal1">Rules</a></li>
+        <!-- Dropdown Trigger -->
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown1"><i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+      <!-- navbar for mobile -->
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="/game/play">Play Now!</a></li>
+        <li><a href="/game/phrases">Full Phraselist</a></li>
+        <li><a class="waves-effect waves-light btn modal-trigger" href="#modal1">Rules</a></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Rules of JS Catchphrase</h4>
+      <ol>
+        <li>You cannot say the word or any part of the word!</li>
+        <li>You cannot use rhyming to get people to guess the word!</li>
+        <li>You cannot use spelling to get people to guess the word!</li>
+      </ol>
+      <div>
+        <h5>For example, say you have the phrase <em>baseball bat</em></h5>
+        <p><span class="red">NO!</span> "The sport where you run to different bases"</p>
+        <p><span class="red">NO!</span> "It rhymes with face call rat"</p>
+        <p><span class="red">NO!</span> "Starts with a 'B'"</p>
+        <p><span class="green">YES</span> "It's used in America's favorite pasttime"</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Sounds Good!</a>
+    </div>
+  </div>
+  <main>
+    <% include partials/alerts %>
+    <%- body %>
+  </main>
+  <footer class="page-footer">
+    <div class="footer-copyright">
+      <div class="container">
+        © 2017 General Assembly Seattle
+        <a class="grey-text text-lighten-4 right" href="http://generalassemb.ly">Thanks for playing!</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    $(document).ready(function(){
+      $('.button-collapse').sideNav();
+      $('.modal-trigger').leanModal();
+      $('#alert_close').click(function(){
+        $('#alert_box').fadeOut('slow', function() {
+        });
+      });
+    });
+  </script>
+</body>
+</html>

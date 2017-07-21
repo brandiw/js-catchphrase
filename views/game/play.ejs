@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <h2>Game Options</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m6 l6">
+      <h5>Join a room in spectator mode</h5>
+      <form action="/game/join" method="POST">
+        <legend>Watch a game in progress</legend>
+        <div class="input-field">
+          <div class="form-group">
+            <input type="text" class="form-control" id="code" placeholder="Room Code">
+          </div>
+        </div>
+
+        <button type="submit" class="btn">Join</button>
+      </form>
+    </div>
+    <div class="col s12 m6 l6">
+      <h5>Create your own room</h5>
+      <form action="/game/play" method="POST">
+        <legend>Start up a new game of JS Catchphrase</legend>
+        <div class="row">
+          <div class="col s8 m8 l9">
+            <label class="control-label" for="team1">Team 1 Name</label>
+            <input type="text" class="form-control" id="team1" name="team1" placeholder="First Team Name" value="Blue Team">
+          </div>
+          <div class="col s4 m4 l3">
+            <label class="control-label" for="team1_color">Team 1 HexColor:</label>
+            <input type="color" id="team1_color" name="team1_color" placeholder="First Team Color" value="#344e87">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s8 m8 l9">
+            <label class="control-label" for="team2">Team 2 Name</label>
+            <input type="text" class="form-control" id="team2" name="team2" placeholder="Second Team Name" value="Red Team">
+          </div>
+          <div class="col s4 m4 l3">
+            <label class="control-label" for="team2_color">Team 2 HexColor:</label>
+            <input type="color" class="form-control" id="team2_color" name="team2_color" placeholder="Second Team Color" value="#df2442">
+          </div>
+        </div>
+
+        <button type="submit" class="btn">Play</button>
+      </form>
+    </div>
+  </div>
+</div>

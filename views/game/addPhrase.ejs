@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <h2>Add A New Phrase</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <form action="/game/phrases/add" method="POST">
+        <legend>Create a new word or phrase to add to the game</legend>
+        <div class="input-field">
+          <div class="form-group">
+            <label class="control-label" for="word">Word/Phrase  <span class="red-text">*</span></label>
+            <input type="text" class="form-control" id="word" name="word" placeholder="New word or phrase">
+          </div>
+        </div>
+        <div class="input-field">
+          <div class="form-group">
+            <label class="control-label" for="description">Description (optional)</label>
+            <input type="text" class="form-control" id="description" name="description" placeholder="A description about the phrase">
+          </div>
+        </div>
+        <div class="input-field">
+          <div class="form-group">
+            <label class="control-label" for="img">Image URL (optional)</label>
+            <input type="text" class="form-control" id="img" name="img" placeholder="A related image">
+          </div>
+        </div>
+
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
