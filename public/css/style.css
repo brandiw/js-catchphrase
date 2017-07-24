@@ -35,4 +35,13 @@ i.icon-red{
 .card{
   padding: 12px;
 }
-
+#flip{
+  border: 3px solid navy;
+  border-radius: 10px;
+  max-width: 250px;
+  min-height: 362px;
+  padding: 0 20px;
+}
+#flip h6{
+  color: #999;
+}

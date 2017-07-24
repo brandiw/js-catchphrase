@@ -14,7 +14,13 @@ router
 });
 
 router.get('/play/active/:id', function(req, res){
-  res.render('game/play');
+  var roomOpts = {
+    team1: "Red Team",
+    team2: "Green Team",
+    team1Color: "fe1123",
+    team2Color: "3bb219"
+  };
+  res.render('game/activeGame', {roomOptions: roomOpts});
 });
 
 router.post('/join', function(req, res){
@@ -47,7 +53,7 @@ router.post('/phrases/add', function(req, res){
     }).spread(function(phrase, wasCreated){
       if(wasCreated){
         req.flash('success', 'You have added the phrase');
-        res.redirect('/');
+        res.redirect('/game/phrases');
       }
       else{
         req.flash('error', 'This phrase already exists!');
@@ -59,6 +65,15 @@ router.post('/phrases/add', function(req, res){
       res.redirect('/game/phrase/add');
     });
   }
+});
+
+router.get('/card', function(req, res){
+  var card = {
+    image: '',
+    word: 'Linked List',
+    description: 'It\'s a data structure!'
+  }
+  res.send({card: card});
 });
 
 module.exports = router;
