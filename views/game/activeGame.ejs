@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container play">
   <div class="row">
     <div class="col s6 m8 l8">
       <h4 id="message">Begin!</h4>
@@ -42,17 +42,60 @@
     </div>
   </div>
 </div>
+<div class="container summary hide">
+  <div class="row">
+    <div class="col s12 m12 l12 center">
+      <h3>Game Results</h3>
+    </div>
+    <div class="col s12 m12 l12">
+      <div class="row">
+        <div class="col s6 m6 l6">
+          <h4 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %>: <span id="score1">0</span></h4>
+        </div>
+        <div class="col s6 m6 l6 right-align">
+          <h4 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %>: <span id="score2">0</span></h4>
+        </div>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <h4 class="center">Skipped Words</h4>
+        </div>
+      </div>
+      <div id="skipped" class="row center">
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 $(document).ready(function(){
-  var DEFAULT_START = 10;
+  var DEFAULT_START = 90;
   var startTime = DEFAULT_START;
   var interval = null;
-  var first = true;
+  var currentCard = null;
   var score1 = 0;
   var score2 = 0;
   var team1Turn = true;
+  var deck = null;
+  var skipped = [];
+  getCards();
   startTurn();
+
+  function getCards(){
+    $.ajax({
+      method: 'GET',
+      url: '/game/cards',
+      async: false,
+      success: function(data){
+        console.log('success', data)
+        deck = data.cards;
+      },
+      error: function(err){
+        console.log('err', err);
+      }
+    });
+  }
 
   function tick(){
     startTime -= 1;
@@ -74,75 +117,62 @@ $(document).ready(function(){
   }
 
   function startTurn(){
-    console.log('starting turn');
     $('#start').css('display', 'none');
     $('#skip').css('display', 'block');
     $('#message').html('Begin!');
     startTime = DEFAULT_START;
     $('#deck').bind('click', next);
     interval = setInterval(tick, 1000);
+    flipCard();
   }
 
   function finishedTurn(){
-    console.log('finishing turn');
     //switch to other team
     team1Turn = !team1Turn;
     //disable deck click
     $('#deck').unbind('click');
     //display message
-    $('#message').html('Turn done! ' + (team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>') + ', press start when ready!');
+    $('#message').html((team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>') + ', start when ready!');
     //show start button
     $('#start').css('display', 'block');
     $('#skip').css('display', 'none');
   }
 
   function flipCard(){
-    console.log('card flip');
-    //AJAX to select a card
-    $.ajax({
-      method: 'GET',
-      url: '/game/card',
-      success: function(data){
-        console.log('success', data.card);
-        //Display the card
-        var title = $('<h3>').append(data.card.word);
-        var description = $('<h6>').append(data.card.description);
-        var image = $('<img>').attr('class', 'responsive-img');
-        var newDiv = $('<div>').append(title).append(description);
+    if(!deck || deck.length <= 0){
+      console.log('reshuffling cards');
+      getCards();
+    }
+    currentCard = deck.shift();
 
-        if(data.card.image != ''){
-          image.attr('src', data.card.image);
-        }
-        else{
-          image.attr('src', '/images/default_card.png');
-          image.css('opacity', '0.1');
-        }
+    //Display the card
+    var title = $('<h3>').append(currentCard.word);
+    var description = $('<h6>').append(currentCard.description);
+    var image = $('<img>').attr('class', 'responsive-img');
+    var newDiv = $('<div>').append(title).append(description).append('<br>').append('<br>');
 
-        $('#flip').empty().append(newDiv).append($('<div>').append(image));
+    if(currentCard.image != ''){
+      image.attr('src', currentCard.img);
+    }
+    else{
+      image.attr('src', '/images/default_card.png');
+      image.css('opacity', '0.1');
+    }
 
-        //Don't allow another click right away
-        $('#deck').unbind('click');
-        setTimeout(function(){
-          if(startTime > 1){
-            $('#deck').bind('click', next);
-          }
-        }, 1000);
-      },
-      error: function(err){
-        console.log('err', err);
+    $('#flip').empty().append(newDiv).append($('<div>').append(image));
+
+    //Don't allow another click right away
+    $('#deck').unbind('click');
+    setTimeout(function(){
+      if(startTime > 1){
+        $('#deck').bind('click', next);
       }
-    });
+    }, 800);
   }
 
   function next(){
     if(startTime > 1){
-      console.log('next');
-      if(first){
-        first = false;
-      }
-      else{
-        awardPoint();
-      }
+      awardPoint();
       flipCard();
     }
   }
@@ -160,20 +190,41 @@ $(document).ready(function(){
 
   $('#skip').click(function(){
     if(startTime > 1){
-      console.log('skip');
+      skipped.push(currentCard);
       flipCard();
     }
   });
 
   $('#start').click(function(){
     startTime = DEFAULT_START;
-    console.log('starting again');
     startTurn();
   });
 
   $('#end').click(function(){
-    console.log('End the game');
-    //Redirect to summary page
+    //Update game state, then show game summary
+    $.ajax({
+      method: 'POST',
+      url: '/game/end',
+      data: {score1: score1, score2: score2, skipped: JSON.stringify(skipped)},
+      success: function(data){
+        console.log('success', data);
+        $('#score1').html(score1);
+        $('#score2').html(score2);
+        if(skipped && skipped.length > 0){
+          skipped.forEach(function(obj){
+            $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj.word + '</h5>'));
+          });
+        }
+        else {
+          $('#skipped').append($('<div class="col s12 m12 l12">').append('<h5 class="grey-text">No Words Skipped - Good Job!</h5>'));
+        }
+        $('.play').hide();
+        $('.summary').removeClass('hide');
+      },
+      error: function(err){
+        console.log('err', err);
+      }
+    });
   })
 });
 </script>

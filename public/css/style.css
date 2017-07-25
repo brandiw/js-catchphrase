@@ -35,6 +35,10 @@ i.icon-red{
 .card{
   padding: 12px;
 }
+.sub-text{
+  color: #999;
+  font-size: 16px;
+}
 #flip{
   border: 3px solid navy;
   border-radius: 10px;

@@ -14,13 +14,15 @@ router
 });
 
 router.get('/play/active/:id', function(req, res){
-  var roomOpts = {
-    team1: "Red Team",
-    team2: "Green Team",
-    team1Color: "fe1123",
-    team2Color: "3bb219"
-  };
-  res.render('game/activeGame', {roomOptions: roomOpts});
+  db.phrase.findAll().then(function(phrases){
+    var roomOpts = {
+      team1: "Red Team",
+      team2: "Green Team",
+      team1Color: "fe1123",
+      team2Color: "3bb219"
+    };
+    res.render('game/activeGame', {roomOptions: roomOpts});
+  });
 });
 
 router.post('/join', function(req, res){
@@ -67,13 +69,15 @@ router.post('/phrases/add', function(req, res){
   }
 });
 
-router.get('/card', function(req, res){
-  var card = {
-    image: '',
-    word: 'Linked List',
-    description: 'It\'s a data structure!'
-  }
-  res.send({card: card});
+router.get('/cards', function(req, res){
+  db.phrase.findAll().then(function(phrases){
+    res.send({cards: phrases.sort(function(){ return 0.5 - Math.random(); }) });
+  });
+});
+
+router.post('/end', function(req, res){
+  console.log("BODY", req.body);
+  res.send('okay');
 });
 
 module.exports = router;
