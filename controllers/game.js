@@ -19,14 +19,23 @@ router.get('/play/active/:id', function(req, res){
       team1: "Red Team",
       team2: "Green Team",
       team1Color: "fe1123",
-      team2Color: "3bb219"
+      team2Color: "3bb219",
+      roomId: req.params.id
     };
     res.render('game/activeGame', {roomOptions: roomOpts});
   });
 });
 
 router.post('/join', function(req, res){
-  res.send('Joining room', req.body);
+  console.log('Joining room. req.body:', req.body);
+  var roomDetails = {
+    team1: "Red Team",
+    team2: "Green Team",
+    team1Color: "fe1123",
+    team2Color: "3bb219",
+    roomId: 'asdh'
+  };
+  res.render('game/observeRoom', {roomOptions: roomDetails})
 });
 
 router.get('/phrases', function(req, res){
@@ -76,7 +85,7 @@ router.get('/cards', function(req, res){
 });
 
 router.post('/end', function(req, res){
-  console.log("BODY", req.body);
+  console.log('BODY', req.body);
   res.send('okay');
 });
 

@@ -13,3 +13,9 @@ Developed with:
 * SQL
 * EJS
 * Materialize
+
+#### To Do List
+
+* Team currently playing display both pages
+* Sockets work perfectly
+* Rooms actually post team names/colors to game room

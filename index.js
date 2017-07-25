@@ -6,7 +6,9 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var flash = require('connect-flash');
 var db = require('./models');
+var router = require('./controllers/game');
 var app = express();
+var io = require('socket.io').listen(app.listen(3000));
 
 //Middleware & Stuff
 app.use(session({
@@ -24,13 +26,47 @@ app.use(function(req, res, next){
   next();
 });
 
+//Define some IO stuff
+io.sockets.on("connection", function(socket){
+  console.log("Connection!");
+  socket.on('create', function(room) {
+    socket.join(room);
+  });
+
+  socket.on('tick', function(room, time){
+    io.sockets.in(room).emit('tick', time);
+  });
+
+  socket.on('flip', function(room, card){
+    io.sockets.in(room).emit('flip', card);
+  });
+
+  socket.on('point', function(room, scores){
+    io.sockets.in(room).emit('point', scores);
+  });
+
+  socket.on('end', function(room, info){
+    console.log('end backend', room, info);
+    io.sockets.in(room).emit('end', info);
+  });
+
+  socket.on("disconnect", function(){
+    console.log("Disconnection!");
+  });
+});
+
+// Make io accessible to our router
+app.use(function(req,res,next){
+    req.io = io;
+    next();
+});
+
 //Routes & Controllers
-app.use('/game', require('./controllers/game'));
+app.use('/game', router);
 
 app.get('/', function(req, res){
   req.flash('success', 'Welcome to JS Catchphrase');
   res.render('home');
 });
 
-//Listen on default port 3000
-app.listen(process.env.PORT || 3000);
+module.exports = app;

@@ -1,0 +1,136 @@
+<div class="container play">
+  <div class="row">
+    <div class="col s6 m8 l8">
+      <h5>Observing Room: <%= roomOptions.roomId %></h5>
+    </div>
+    <div class="col s6 m4 l4">
+      <h5>Remaining Time: <span id="timer">90</span></h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s6 m5 l5">
+      <h5 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %> Score</h5>
+      <h4 id="team1Score" style="color: #<%= roomOptions.team1Color %>;">0</h4>
+    </div>
+    <div class="col s6 m2 l2">
+      <button id="leave" class="btn orange">Leave Room</button>
+    </div>
+    <div class="col s6 m5 l5 right-align">
+      <h5 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %> Score</h5>
+      <h4 id="team2Score" style="color: #<%= roomOptions.team2Color %>;">0</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <hr>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m6 l6">
+      <img id="deck" class="card-back" src="/images/card_back.png">
+    </div>
+    <div class="col s12 m6 l6">
+      <div id="flip">
+        <h3>Waiting...</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container summary hide">
+  <div class="row">
+    <div class="col s12 m12 l12 center">
+      <h3>Game Results</h3>
+    </div>
+    <div class="col s12 m12 l12">
+      <div class="row">
+        <div class="col s6 m6 l6">
+          <h4 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %>: <span id="score1">0</span></h4>
+        </div>
+        <div class="col s6 m6 l6 right-align">
+          <h4 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %>: <span id="score2">0</span></h4>
+        </div>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <h4 class="center">Skipped Words</h4>
+        </div>
+      </div>
+      <div id="skipped" class="row center">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+  console.log('join room', '<%= roomOptions.roomId %>');
+  socket.emit('create', '<%= roomOptions.roomId %>');
+
+  socket.on("tick", function(time){
+    console.log('tick event', time);
+    $('#timer').html(time);
+
+    if(time === 59){
+      $('#timer').css('color', 'orange');
+    }
+    if(time === 29){
+      $('#timer').css('color', '#f00');
+    }
+    if(time === 10){
+      $('#timer').css('font-size', '32px');
+    }
+  });
+
+  socket.on('flip', function(currentCard){
+    var title = $('<h3 class="blur">').append(currentCard.word);
+    var description = $('<h6 class="blur">').append(currentCard.description);
+    var image = $('<img>').attr('class', 'responsive-img blur');
+    var newDiv = $('<div>').append(title).append(description).append('<br>').append('<br>');
+
+    if(currentCard.image != ''){
+      image.attr('src', currentCard.img);
+    }
+    else{
+      image.attr('src', '/images/default_card.png');
+      image.css('opacity', '0.1');
+    }
+
+    $('#flip').empty().append(newDiv).append($('<div>').append(image));
+  });
+
+  socket.on('point', function(scores){
+    if(team1Turn){
+      score1 += 1;
+      $('#team1Score').html(score1);
+    }
+    else{
+      score2 += 1;
+      $('#team2Score').html(score2);
+    }
+  });
+
+  socket.on("end", function(info){
+    console.log('end event', info);
+    $('#score1').html(info.score1);
+    $('#score2').html(info.score2);
+    var skipped = info.skipped ? JSON.parse(info.skipped) : [];
+    if(skipped.length > 0){
+      skipped.forEach(function(obj){
+        $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj.word + '</h5>'));
+      });
+    }
+    else {
+      $('#skipped').append($('<div class="col s12 m12 l12">').append('<h5 class="grey-text">No Words Skipped - Good Job!</h5>'));
+    }
+    $('.play').hide();
+    $('.summary').removeClass('hide');
+  });
+
+  $(document).ready(function(){
+    $('#leave').click(function(){
+      console.log('leave the room');
+    });
+  });
+</script>

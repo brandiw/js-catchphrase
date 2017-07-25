@@ -39,6 +39,13 @@ i.icon-red{
   color: #999;
   font-size: 16px;
 }
+.blur{
+  -webkit-filter: blur(15px);
+  -moz-filter: blur(15px);
+  -o-filter: blur(15px);
+  -ms-filter: blur(15px);
+  filter: blur(15px);
+}
 #flip{
   border: 3px solid navy;
   border-radius: 10px;

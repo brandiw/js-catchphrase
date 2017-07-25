@@ -68,7 +68,13 @@
   </div>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+//emit time, scores, end event
+var socket = io();
+console.log('create room', '<%= roomOptions.roomId %>');
+socket.emit('create', '<%= roomOptions.roomId %>');
+
 $(document).ready(function(){
   var DEFAULT_START = 90;
   var startTime = DEFAULT_START;
@@ -99,6 +105,7 @@ $(document).ready(function(){
 
   function tick(){
     startTime -= 1;
+    socket.emit('tick', '<%= roomOptions.roomId %>', startTime);
     $('#timer').html(startTime);
 
     if(startTime === 59){
@@ -144,6 +151,7 @@ $(document).ready(function(){
       getCards();
     }
     currentCard = deck.shift();
+    socket.emit('flip', '<%= roomOptions.roomId %>', currentCard);
 
     //Display the card
     var title = $('<h3>').append(currentCard.word);
@@ -186,6 +194,7 @@ $(document).ready(function(){
       score2 += 1;
       $('#team2Score').html(score2);
     }
+    socket.emit('point', '<%= roomOptions.roomId %>', {team1: score1, team2: score2, team1Turn: team1Turn});
   }
 
   $('#skip').click(function(){
@@ -201,6 +210,10 @@ $(document).ready(function(){
   });
 
   $('#end').click(function(){
+    if(interval){
+      clearInterval(interval);
+    }
+
     //Update game state, then show game summary
     $.ajax({
       method: 'POST',
@@ -208,6 +221,7 @@ $(document).ready(function(){
       data: {score1: score1, score2: score2, skipped: JSON.stringify(skipped)},
       success: function(data){
         console.log('success', data);
+        socket.emit('end', '<%= roomOptions.roomId %>', {score1: score1, score2: score2, skipped: JSON.stringify(skipped)});
         $('#score1').html(score1);
         $('#score2').html(score2);
         if(skipped && skipped.length > 0){
