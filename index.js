@@ -8,7 +8,7 @@ var flash = require('connect-flash');
 var db = require('./models');
 var router = require('./controllers/game');
 var app = express();
-var io = require('socket.io').listen(app.listen(3000));
+var io = require('socket.io').listen(app.listen(process.env.PORT || 3000));
 
 //Middleware & Stuff
 app.use(session({
