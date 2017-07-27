@@ -23,6 +23,15 @@ module.exports = {
       color2: {
         type: Sequelize.STRING
       },
+      score1: {
+        type: Sequelize.STRING
+      },
+      score2: {
+        type: Sequelize.STRING
+      },
+      skipped: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

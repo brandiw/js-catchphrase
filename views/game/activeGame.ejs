@@ -201,7 +201,7 @@ $(document).ready(function(){
 
   $('#skip').click(function(){
     if(startTime > 1){
-      skipped.push(currentCard);
+      skipped.push(currentCard.word);
       flipCard();
     }
   });
@@ -220,7 +220,7 @@ $(document).ready(function(){
     $.ajax({
       method: 'POST',
       url: '/game/end',
-      data: {score1: score1, score2: score2, skipped: JSON.stringify(skipped)},
+      data: {room: '<%= roomOptions.room %>', score1: score1, score2: score2, skipped: skipped.join(',')},
       success: function(data){
         console.log('success', data);
         socket.emit('end', '<%= roomOptions.room %>', {score1: score1, score2: score2, skipped: JSON.stringify(skipped)});
@@ -228,7 +228,7 @@ $(document).ready(function(){
         $('#score2').html(score2);
         if(skipped && skipped.length > 0){
           skipped.forEach(function(obj){
-            $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj.word + '</h5>'));
+            $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj + '</h5>'));
           });
         }
         else {

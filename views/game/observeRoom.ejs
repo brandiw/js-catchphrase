@@ -119,7 +119,7 @@
     var skipped = info.skipped ? JSON.parse(info.skipped) : [];
     if(skipped.length > 0){
       skipped.forEach(function(obj){
-        $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj.word + '</h5>'));
+        $('#skipped').append($('<div class="col s6 m4 l4">').append('<h5 class="grey-text">' + obj + '</h5>'));
       });
     }
     else {

@@ -69,7 +69,6 @@ app.use(function(req,res,next){
 app.use('/game', router);
 
 app.get('/', function(req, res){
-  req.flash('success', 'Welcome to JS Catchphrase');
   res.render('home');
 });
 

@@ -17,5 +17,7 @@ Developed with:
 #### To Do List
 
 * General code clean up
-* Game doesn't save results (should it?)
-* Fix alerts
+* Create a page for showing past games
+* Fix: alerts
+* Fix: Point counter sometimes adds twice
+

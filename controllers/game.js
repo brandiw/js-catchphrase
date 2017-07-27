@@ -19,7 +19,6 @@ router
   }).then(function(game){
     //generate room id based on game id
     var hash = hashids.encode(game.id);
-    console.log('hash', hash);
     game.room = hash;
     game.save().then(function(saved){
       //redirect to active play route
@@ -39,7 +38,6 @@ router.get('/play/active/:id', function(req, res){
 });
 
 router.post('/join', function(req, res){
-  console.log('Joining room. req.body:', req.body);
   db.game.find({
     where: {room: req.body.code}
   }).then(function(room){
@@ -48,7 +46,7 @@ router.post('/join', function(req, res){
     }
     else {
       req.flash('error', 'No room was found with that ID');
-      res.render('game/play');
+      res.redirect('/game/play');
     }
   }).catch(function(err){
     console.log('err', err);
@@ -89,7 +87,7 @@ router.post('/phrases/add', function(req, res){
       }
     }).catch(function(err){
       console.log('error', err);
-      req.flash('error', 'Something went wrong.');
+      req.flash('error', 'Something went wrong. Please check logs.');
       res.redirect('/game/phrase/add');
     });
   }
@@ -103,7 +101,24 @@ router.get('/cards', function(req, res){
 
 router.post('/end', function(req, res){
   console.log('BODY', req.body);
-  res.send('okay');
+  db.game.find({
+    where: {room: req.body.room }
+  }).then(function(game){
+    game.score1 = req.body.score1;
+    game.score2 = req.body.score2;
+    game.skipped = req.body.skipped;
+    game.save().then(function(saved){
+      res.send('okay');
+    }).catch(function(err){
+      console.log('error', err);
+      req.flash('error', 'Game was not saved. Please check logs.');
+      res.redirect('/game/play');
+    });
+  }).catch(function(err){
+    console.log('error', err);
+    req.flash('error', 'Game not found. Please check logs.');
+    res.redirect('/game/play');
+  });
 });
 
 module.exports = router;
