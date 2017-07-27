@@ -12,17 +12,17 @@
       <button id="end" class="btn red">STOP!</button>
       <button id="skip" class="btn orange">SKIP!</button>
       <button id="start" class="btn">START!</button>
-      <h5 id="turn" style="color: #<%= roomOptions.team1Color %>;">GO <%= roomOptions.team1 %>!</h5>
+      <h5 id="turn" style="color: <%= roomOptions.color1 %>;">GO <%= roomOptions.team1 %>!</h5>
     </div>
   </div>
   <div class="row">
     <div class="col s6 m6 l6">
-      <h5 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %> Score</h5>
-      <h4 id="team1Score" style="color: #<%= roomOptions.team1Color %>;">0</h4>
+      <h5 style="color: <%= roomOptions.color1 %>;"><%= roomOptions.team1 %> Score</h5>
+      <h4 id="team1Score" style="color: <%= roomOptions.color1 %>;">0</h4>
     </div>
     <div class="col s6 m6 l6 right-align">
-      <h5 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %> Score</h5>
-      <h4 id="team2Score" style="color: #<%= roomOptions.team2Color %>;">0</h4>
+      <h5 style="color: <%= roomOptions.color2 %>;"><%= roomOptions.team2 %> Score</h5>
+      <h4 id="team2Score" style="color: <%= roomOptions.color2 %>;">0</h4>
     </div>
   </div>
   <div class="row">
@@ -49,10 +49,10 @@
     <div class="col s12 m12 l12">
       <div class="row">
         <div class="col s6 m6 l6">
-          <h4 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %>: <span id="score1">0</span></h4>
+          <h4 style="color: <%= roomOptions.color1 %>;"><%= roomOptions.team1 %>: <span id="score1">0</span></h4>
         </div>
         <div class="col s6 m6 l6 right-align">
-          <h4 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %>: <span id="score2">0</span></h4>
+          <h4 style="color: <%= roomOptions.color2 %>;"><%= roomOptions.team2 %>: <span id="score2">0</span></h4>
         </div>
         <hr>
       </div>
@@ -71,8 +71,8 @@
 <script>
 //emit time, scores, end event
 var socket = io();
-console.log('create room', '<%= roomOptions.roomId %>');
-socket.emit('create', '<%= roomOptions.roomId %>');
+console.log('create room', '<%= roomOptions.room %>');
+socket.emit('create', '<%= roomOptions.room %>');
 
 $(document).ready(function(){
   var DEFAULT_START = 15;
@@ -139,10 +139,9 @@ $(document).ready(function(){
     $('#deck').unbind('click');
     //display message
     $('#message').html((team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>') + ', start when ready!');
-    $('#message').css('color', (team1Turn ? '<%=roomOptions.team1Color%>' : '<%=roomOptions.team2Color%>'));
-    $('#turn').css('color', '#' + (team1Turn ? '<%=roomOptions.team1Color%>' : '<%=roomOptions.team2Color%>'));
+    $('#turn').css('color', (team1Turn ? '<%=roomOptions.color1%>' : '<%=roomOptions.color2%>'));
     $('#turn').html('GO ' + (team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>') + '!');
-    socket.emit('turn', '<%= roomOptions.roomId %>', (team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>'), (team1Turn ? '<%=roomOptions.team1Color%>' : '<%=roomOptions.team2Color%>'));
+    socket.emit('turn', '<%= roomOptions.room %>', (team1Turn ? '<%=roomOptions.team1%>' : '<%=roomOptions.team2%>'), (team1Turn ? '<%=roomOptions.color1%>' : '<%=roomOptions.color2%>'));
     //show start button
     $('#start').css('display', 'inline-block');
     $('#skip').css('display', 'none');
@@ -154,7 +153,7 @@ $(document).ready(function(){
       getCards();
     }
     currentCard = deck.shift();
-    socket.emit('flip', '<%= roomOptions.roomId %>', currentCard);
+    socket.emit('flip', '<%= roomOptions.room %>', currentCard);
 
     //Display the card
     var title = $('<h3>').append(currentCard.word);
@@ -197,7 +196,7 @@ $(document).ready(function(){
       score2 += 1;
       $('#team2Score').html(score2);
     }
-    socket.emit('point', '<%= roomOptions.roomId %>', {team1: score1, team2: score2});
+    socket.emit('point', '<%= roomOptions.room %>', {team1: score1, team2: score2});
   }
 
   $('#skip').click(function(){
@@ -224,7 +223,7 @@ $(document).ready(function(){
       data: {score1: score1, score2: score2, skipped: JSON.stringify(skipped)},
       success: function(data){
         console.log('success', data);
-        socket.emit('end', '<%= roomOptions.roomId %>', {score1: score1, score2: score2, skipped: JSON.stringify(skipped)});
+        socket.emit('end', '<%= roomOptions.room %>', {score1: score1, score2: score2, skipped: JSON.stringify(skipped)});
         $('#score1').html(score1);
         $('#score2').html(score2);
         if(skipped && skipped.length > 0){

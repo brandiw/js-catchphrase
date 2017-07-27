@@ -1,4 +1,6 @@
 var express = require('express');
+var Hashids = require("hashids");
+var hashids = new Hashids("this is my salt");
 var db = require('../models');
 var router = express.Router();
 
@@ -8,34 +10,49 @@ router
 })
 .post('/play', function(req, res){
   console.log('post to play', req.body);
-  res.send('posted to /game/play');
-  //generate room id
-  //redirect to active play route
+  db.game.create({
+    room: '',
+    team1: req.body.team1,
+    team2: req.body.team2,
+    color1: req.body.team1_color,
+    color2: req.body.team2_color
+  }).then(function(game){
+    //generate room id based on game id
+    var hash = hashids.encode(game.id);
+    console.log('hash', hash);
+    game.room = hash;
+    game.save().then(function(saved){
+      //redirect to active play route
+      res.redirect('/game/play/active/' + hash);
+    });
+  });
 });
 
 router.get('/play/active/:id', function(req, res){
-  db.phrase.findAll().then(function(phrases){
-    var roomOpts = {
-      team1: "Red Team",
-      team2: "Green Team",
-      team1Color: "fe1123",
-      team2Color: "3bb219",
-      roomId: req.params.id
-    };
-    res.render('game/activeGame', {roomOptions: roomOpts});
+  db.game.find({
+    where: {room: req.params.id}
+  }).then(function(room){
+    res.render('game/activeGame', {roomOptions: room});
+  }).catch(function(err){
+    console.log('err', err);
   });
 });
 
 router.post('/join', function(req, res){
   console.log('Joining room. req.body:', req.body);
-  var roomDetails = {
-    team1: "Red Team",
-    team2: "Green Team",
-    team1Color: "fe1123",
-    team2Color: "3bb219",
-    roomId: 'asdh'
-  };
-  res.render('game/observeRoom', {roomOptions: roomDetails})
+  db.game.find({
+    where: {room: req.body.code}
+  }).then(function(room){
+    if(room && room.id){
+      res.render('game/observeRoom', {roomOptions: room});
+    }
+    else {
+      req.flash('error', 'No room was found with that ID');
+      res.render('game/play');
+    }
+  }).catch(function(err){
+    console.log('err', err);
+  });
 });
 
 router.get('/phrases', function(req, res){
