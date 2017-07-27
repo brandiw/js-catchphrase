@@ -16,9 +16,6 @@ Developed with:
 
 #### To Do List
 
-* Team currently playing display both pages
-* Sockets work perfectly
-* Rooms actually post team names/colors to game room
-* Leave the room button is a stub
 * General code clean up
 * Game doesn't save results (should it?)
+* Fix alerts
