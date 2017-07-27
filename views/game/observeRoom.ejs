@@ -3,17 +3,20 @@
     <div class="col s6 m8 l8">
       <h5>Observing Room: <%= roomOptions.roomId %></h5>
     </div>
-    <div class="col s6 m4 l4">
+    <div class="col s6 m4 l4 right-align">
       <h5>Remaining Time: <span id="timer">90</span></h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m12 l12 center">
+      <button id="leave" class="btn orange">Leave Room</button>
+      <h5 id="turn" style="color: #<%= roomOptions.team1Color %>;">GO <%= roomOptions.team1 %>!</h5>
     </div>
   </div>
   <div class="row">
     <div class="col s6 m5 l5">
       <h5 style="color: #<%= roomOptions.team1Color %>;"><%= roomOptions.team1 %> Score</h5>
       <h4 id="team1Score" style="color: #<%= roomOptions.team1Color %>;">0</h4>
-    </div>
-    <div class="col s6 m2 l2">
-      <button id="leave" class="btn orange">Leave Room</button>
     </div>
     <div class="col s6 m5 l5 right-align">
       <h5 style="color: #<%= roomOptions.team2Color %>;"><%= roomOptions.team2 %> Score</h5>
@@ -25,7 +28,7 @@
       <hr>
     </div>
   </div>
-  <div class="row">
+  <div class="row center">
     <div class="col s12 m6 l6">
       <img id="deck" class="card-back" src="/images/card_back.png">
     </div>
@@ -65,7 +68,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
   var socket = io();
-  console.log('join room', '<%= roomOptions.roomId %>');
   socket.emit('create', '<%= roomOptions.roomId %>');
 
   socket.on("tick", function(time){
@@ -101,14 +103,13 @@
   });
 
   socket.on('point', function(scores){
-    if(team1Turn){
-      score1 += 1;
-      $('#team1Score').html(score1);
-    }
-    else{
-      score2 += 1;
-      $('#team2Score').html(score2);
-    }
+    $('#team1Score').html(scores.team1);
+    $('#team2Score').html(scores.team2);
+  });
+
+  socket.on('turn', function(team, color){
+    $('#turn').css('color', '#' + color);
+    $('#turn').html('GO ' + team + '!');
   });
 
   socket.on("end", function(info){

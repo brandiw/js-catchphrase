@@ -52,6 +52,7 @@ i.icon-red{
   max-width: 250px;
   min-height: 362px;
   padding: 0 20px;
+  margin: 0 auto;
 }
 #flip h6{
   color: #999;

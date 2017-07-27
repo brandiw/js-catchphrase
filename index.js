@@ -41,6 +41,10 @@ io.sockets.on("connection", function(socket){
     io.sockets.in(room).emit('flip', card);
   });
 
+  socket.on('turn', function(room, team, color){
+    io.sockets.in(room).emit('turn', team, color);
+  });
+
   socket.on('point', function(room, scores){
     io.sockets.in(room).emit('point', scores);
   });
