@@ -70,7 +70,7 @@
   var socket = io();
   socket.emit('create', '<%= roomOptions.room %>');
 
-  socket.on("tick", function(time){
+  socket.on('tick', function(time){
     console.log('tick event', time);
     $('#timer').html(time);
 
