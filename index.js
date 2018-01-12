@@ -28,7 +28,6 @@ app.use(function(req, res, next){
 
 //Define some IO stuff
 io.sockets.on("connection", function(socket){
-  console.log("Connection!");
   socket.on('create', function(room) {
     socket.join(room);
   });
